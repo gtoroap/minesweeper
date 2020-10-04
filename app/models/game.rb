@@ -17,6 +17,8 @@ class Game < ApplicationRecord
     game.status = 'new'
   end
 
+  before_create :build_grid
+
   private
   def total_mines_in_game
     min = round_nearest_ten(rows * columns * 0.15)
@@ -27,5 +29,25 @@ class Game < ApplicationRecord
 
   def round_nearest_ten(number)
     number.round(-1)
+  end
+
+  def build_grid
+    #We need to initialize a multidimensional array with zeros
+    self.grid = Array.new(rows) { Array.new(rows, 0) }
+
+    #After that we need randomly put mines
+    (1..mines).each { randomly_assign_mine }
+  end
+
+  def randomly_assign_mine
+    empty = true
+    while empty
+      random_x = rand(0...rows)
+      random_y = rand(0...columns)
+      if self.grid[random_x][random_y] == 0
+        self.grid[random_x][random_y] = 1
+        empty = false
+      end
+    end
   end
 end
