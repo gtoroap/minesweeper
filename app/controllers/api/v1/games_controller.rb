@@ -8,7 +8,7 @@ module Api
           @game.save
           render(status: :ok, json: @game)
         else
-          render(status: :bad_request, json: { message: @game.errors.full_messages })
+          render(status: :bad_request, json: { message: @game.errors.messages })
         end
       end
 
