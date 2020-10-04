@@ -12,6 +12,8 @@ module Api
         end
       end
 
+      private
+
       def game_params
         params.permit(:rows, :columns, :mines)
       end
