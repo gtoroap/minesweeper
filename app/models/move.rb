@@ -4,8 +4,11 @@ class Move < ApplicationRecord
   validate :point_x_valid?
   validate :point_y_valid?
   validate :already_played?
+  validate :game_over?
 
   MINE_VALUE = -1
+
+  after_create :possibles_moves
 
   def point_x_valid?
     if !(0...game.rows).include?(point_x)
@@ -26,17 +29,38 @@ class Move < ApplicationRecord
     end
   end
 
+  def game_over?
+    if game.is_over?
+      errors.add(:move, I18n.t('moves.game_over'))
+    end
+  end
+
   def mine_found?
-    game.grid[point_x][point_y] == MINE_VALUE
+    if game.grid[point_x][point_y] == MINE_VALUE
+      game.update(status: 'lost')
+      true
+    else
+      false
+    end
+  end
+
+  def possibles_moves
+    possible = 0
+    (0...game.rows).each do |row|
+      (0...game.columns).each do |col|
+        possible += 1 if game.grid[row][col].nil?
+      end
+    end
+    game.update(status: 'won') if possible == 0
   end
 
   def mines_around
     mines = 0
 
-    (point_y - 1..point_y + 1).each do |j|
-      (point_x - 1..point_x + 1).each do |i|
-        next if j < 0 || i < 0 || point_x == i && point_y == j
-        mines += 1 if game.grid[j][i] == MINE_VALUE
+    (point_x - 1..point_x + 1).each do |i|
+      (point_y - 1..point_y + 1).each do |j|
+        next if j < 0 || i < 0 || j > game.columns - 1 || i > game.rows - 1 || point_x == i && point_y == j
+        mines += 1 if game.grid[i][j] == MINE_VALUE
       end
     end
 

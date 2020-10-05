@@ -5,3 +5,4 @@ en:
   moves:
     out_of_range: "should be between %{min} and %{max}"
     already_played: 'already played'
+    game_over: 'is not valid because game is over'

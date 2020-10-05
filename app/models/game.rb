@@ -2,6 +2,7 @@ class Game < ApplicationRecord
   VALID_ROWS_COLUMNS = 10..20
   DEFAULT_ROWS_COLUMNS = 10
   DEFAULT_MINES = 20
+  GAME_STATUSES = %w(new started paused resumed won lost)
 
   validates :rows, :columns, :mines, presence: true
   validates :rows, inclusion: { in: VALID_ROWS_COLUMNS, message: I18n.t('games.default_row_columns') }
@@ -14,12 +15,21 @@ class Game < ApplicationRecord
     game.rows = DEFAULT_ROWS_COLUMNS if game.rows.nil?
     game.columns = DEFAULT_ROWS_COLUMNS if game.columns.nil?
     game.mines = DEFAULT_MINES if game.mines.nil?
-    game.status = 'new'
   end
 
+  before_create :set_status_as_new
   before_create :build_grid
 
+  def is_over?
+    %w(won lost).include?(status)
+  end
+
   private
+
+  def set_status_as_new
+    status = 'new'
+  end
+
   def total_mines_in_game
     min = round_nearest_ten(rows * columns * 0.15)
     max = round_nearest_ten(rows * columns * 0.25)
