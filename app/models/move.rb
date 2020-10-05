@@ -20,7 +20,7 @@ class Move < ApplicationRecord
   end
 
   def already_played?
-    moves = Move.where(point_x: point_x, point_y: point_y)
+    moves = game.moves.where(point_x: point_x, point_y: point_y)
     if moves.size > 0
       errors.add(:move, I18n.t('moves.already_played'))
     end
