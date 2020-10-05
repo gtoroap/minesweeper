@@ -4,3 +4,4 @@ en:
     total_mines: "should have between %{min} and %{max}"
   moves:
     out_of_range: "should be between %{min} and %{max}"
+    already_played: 'already played'

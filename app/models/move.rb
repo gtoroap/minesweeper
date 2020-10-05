@@ -3,6 +3,7 @@ class Move < ApplicationRecord
 
   validate :point_x_valid?
   validate :point_y_valid?
+  validate :already_played?
 
   MINE_VALUE = -1
 
@@ -15,6 +16,13 @@ class Move < ApplicationRecord
   def point_y_valid?
     if !(0...game.columns).include?(point_y)
       errors.add(:point_y, I18n.t('moves.out_of_range', min: 1, max: game.columns))
+    end
+  end
+
+  def already_played?
+    moves = Move.where(point_x: point_x, point_y: point_y)
+    if moves.size > 0
+      errors.add(:move, I18n.t('moves.already_played'))
     end
   end
 
