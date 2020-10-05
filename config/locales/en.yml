@@ -2,3 +2,5 @@ en:
   games:
     default_row_columns: 'must have between 10 and 20'
     total_mines: "should have between %{min} and %{max}"
+  moves:
+    out_of_range: "should be between %{min} and %{max}"

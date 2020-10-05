@@ -9,7 +9,7 @@ module Api
 
         if @move.valid?
           @move.save
-          render(status: :ok, json: @move)
+          render(status: :ok, json: MovePresenter.new(@move).structure)
         else
           render(status: :bad_request, json: { message: @move.errors.messages })
         end
