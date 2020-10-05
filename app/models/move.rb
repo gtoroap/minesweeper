@@ -4,6 +4,8 @@ class Move < ApplicationRecord
   validate :point_x_valid?
   validate :point_y_valid?
 
+  MINE_VALUE = -1
+
   def point_x_valid?
     if !(0...game.rows).include?(point_x)
       errors.add(:point_x, I18n.t('moves.out_of_range', min: 1, max: game.rows))
@@ -17,7 +19,7 @@ class Move < ApplicationRecord
   end
 
   def mine_found?
-    game.grid[point_x][point_y] == 1
+    game.grid[point_x][point_y] == MINE_VALUE
   end
 
   def mines_around
@@ -26,10 +28,11 @@ class Move < ApplicationRecord
     (point_y - 1..point_y + 1).each do |j|
       (point_x - 1..point_x + 1).each do |i|
         next if j < 0 || i < 0 || point_x == i && point_y == j
-        mines += 1 if game.grid[j][i] == 1
+        mines += 1 if game.grid[j][i] == MINE_VALUE
       end
     end
 
+    game.grid[point_x][point_y] = mines
     mines
   end
 end

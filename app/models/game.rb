@@ -45,7 +45,7 @@ class Game < ApplicationRecord
       random_x = rand(0...rows)
       random_y = rand(0...columns)
       if self.grid[random_x][random_y] == 0
-        self.grid[random_x][random_y] = 1
+        self.grid[random_x][random_y] = Move::MINE_VALUE
         empty = false
       end
     end
