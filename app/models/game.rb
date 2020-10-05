@@ -33,7 +33,7 @@ class Game < ApplicationRecord
 
   def build_grid
     #We need to initialize a multidimensional array with zeros
-    self.grid = Array.new(rows) { Array.new(rows, 0) }
+    self.grid = Array.new(rows) { Array.new(rows) }
 
     #After that we need randomly put mines
     (1..mines).each { randomly_assign_mine }
@@ -44,7 +44,7 @@ class Game < ApplicationRecord
     while empty
       random_x = rand(0...rows)
       random_y = rand(0...columns)
-      if self.grid[random_x][random_y] == 0
+      if self.grid[random_x][random_y].nil?
         self.grid[random_x][random_y] = Move::MINE_VALUE
         empty = false
       end
