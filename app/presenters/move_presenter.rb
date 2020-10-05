@@ -11,6 +11,7 @@ class MovePresenter
       point_x: @move.point_x,
       point_y: @move.point_y,
       mine_found: @move.mine_found?,
+      mines_around: @move.mines_around,
       grid: @move.game.grid
     }
   end

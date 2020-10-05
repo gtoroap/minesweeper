@@ -19,4 +19,17 @@ class Move < ApplicationRecord
   def mine_found?
     game.grid[point_x][point_y] == 1
   end
+
+  def mines_around
+    mines = 0
+
+    (point_y - 1..point_y + 1).each do |j|
+      (point_x - 1..point_x + 1).each do |i|
+        next if j < 0 || i < 0 || point_x == i && point_y == j
+        mines += 1 if game.grid[j][i] == 1
+      end
+    end
+
+    mines
+  end
 end
