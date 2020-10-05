@@ -41,6 +41,7 @@ class Move < ApplicationRecord
     end
 
     game.grid[point_x][point_y] = mines
+    game.save
     mines
   end
 end
