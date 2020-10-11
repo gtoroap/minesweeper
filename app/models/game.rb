@@ -42,10 +42,7 @@ class Game < ApplicationRecord
   end
 
   def build_grid
-    #We need to initialize a multidimensional array with zeros
     self.grid = Array.new(rows) { Array.new(rows) }
-
-    #After that we need randomly put mines
     (1..mines).each { randomly_assign_mine }
   end
 
