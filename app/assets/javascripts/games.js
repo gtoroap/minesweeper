@@ -28,4 +28,8 @@ document.addEventListener("DOMContentLoaded", function() {
     }
 
     drawBoard();
+
+    function createGame(){
+        console.log('clicked')
+    }
 });

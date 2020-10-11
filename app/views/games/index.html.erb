@@ -1,5 +1,55 @@
 <div class="container">
-  <p>List of Games</p>
+  <% if @games.size > 0 %>
+    <p>List of Games</p>
+    <% @games.each do |game| %>
+      <li><%= link_to game.created_at, game %></li>
+    <% end %>
+  <% end %>
 
-  <canvas id="board" width="420" height="420"></canvas>
+  <button onclick='createGame()'>New Game</button>
+
+  <canvas id="board" width="420" height="420" hidden></canvas>
 </div>
+
+<script>
+
+  var createGame = function(){
+    $.ajax({
+      method: "POST",
+      url: "http://localhost:3000/api/v1/games"
+    })
+    .done(function( msg ) {
+      alert( "Game Created: " + msg );
+    });
+  }
+  /*
+  var bw = 400;
+  var bh = 400;
+  //padding around grid
+  var p = 10;
+  //size of canvas
+  var cw = bw + (p*2) + 1;
+  var ch = bh + (p*2) + 1;
+
+  var canvas = document.getElementById('board');
+  var context = canvas.getContext("2d");
+
+  function drawBoard(){
+      for (var x = 0; x <= bw; x += 40) {
+          context.moveTo(0.5 + x + p, p);
+          context.lineTo(0.5 + x + p, bh + p);
+      }
+
+
+      for (var x = 0; x <= bh; x += 40) {
+          context.moveTo(p, 0.5 + x + p);
+          context.lineTo(bw + p, 0.5 + x + p);
+      }
+
+      context.strokeStyle = "black";
+      context.stroke();
+  }
+
+  drawBoard();
+  */
+</script>
