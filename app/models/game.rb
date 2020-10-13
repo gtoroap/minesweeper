@@ -9,7 +9,7 @@ class Game < ApplicationRecord
   validates :columns, inclusion: { in: VALID_ROWS_COLUMNS, message: I18n.t('games.default_row_columns') }
   validate :total_mines_in_game
 
-  has_many :moves, autosave: true
+  has_many :moves, autosave: true, dependent: :destroy
 
   after_initialize do |game|
     game.rows = DEFAULT_ROWS_COLUMNS if game.rows.nil?

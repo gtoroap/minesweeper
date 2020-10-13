@@ -1,4 +1,4 @@
-<div class="container">
+<div id="main" class="container">
   <% if @games.size > 0 %>
     <p>List of Games</p>
     <% @games.each do |game| %>
@@ -7,8 +7,7 @@
   <% end %>
 
   <button onclick='createGame()'>New Game</button>
-
-  <canvas id="board" width="420" height="420" hidden></canvas>
+  <p></p>
 </div>
 
 <script>
@@ -16,40 +15,52 @@
   var createGame = function(){
     $.ajax({
       method: "POST",
-      url: "http://localhost:3000/api/v1/games"
+      url: "http://localhost:3000/api/v1/games",
+      data: {
+        rows: 10,
+        columns: 10,
+        mines: 20
+      }
     })
-    .done(function( msg ) {
-      alert( "Game Created: " + msg );
+    .done(function( response ) {
+      createBoard(response.rows, response.columns, response.mines);
     });
   }
-  /*
-  var bw = 400;
-  var bh = 400;
-  //padding around grid
-  var p = 10;
-  //size of canvas
-  var cw = bw + (p*2) + 1;
-  var ch = bh + (p*2) + 1;
 
-  var canvas = document.getElementById('board');
-  var context = canvas.getContext("2d");
+  var createBoard = function(rows, columns, mines){
+    var cellWidth = 40;
+    var gridWith = cellWidth * rows;
+    var gridHeight = cellWidth * columns;
+    var padding = 10;
+    var canvas = document.createElement('canvas');
+    canvas.width = gridWith + padding * 2;
+    canvas.height = gridHeight + padding * 2;
+    var context = canvas.getContext("2d");
+    var container = document.getElementById('main');
+    container.appendChild(canvas);
 
-  function drawBoard(){
-      for (var x = 0; x <= bw; x += 40) {
-          context.moveTo(0.5 + x + p, p);
-          context.lineTo(0.5 + x + p, bh + p);
+    for (var x = 0; x <= gridWith; x += 40) {
+        context.moveTo(0.5 + x + padding, padding);
+        context.lineTo(0.5 + x + padding, gridHeight + padding);
+    }
+
+    for (var x = 0; x <= gridHeight; x += 40) {
+        context.moveTo(padding, 0.5 + x + padding);
+        context.lineTo(gridWith + padding, 0.5 + x + padding);
+    }
+
+    context.strokeStyle = "black";
+    context.stroke();
+
+    context.font = "24px Arial";
+    context.textAlign = "center";
+
+    for (var y = 0; y < columns; y ++) {
+      for (var x = 0; x < rows; x ++) {
+        context.fillStyle = "#ededed";
+        context.fillRect(40 * x + padding + 1, 40 * y + padding + 1, cellWidth - 1, cellWidth - 1);
       }
-
-
-      for (var x = 0; x <= bh; x += 40) {
-          context.moveTo(p, 0.5 + x + p);
-          context.lineTo(bw + p, 0.5 + x + p);
-      }
-
-      context.strokeStyle = "black";
-      context.stroke();
+    }
+    canvas.removeAttribute("hidden");
   }
-
-  drawBoard();
-  */
 </script>
