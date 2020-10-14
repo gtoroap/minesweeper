@@ -9,6 +9,7 @@ class Move < ApplicationRecord
   MINE_VALUE = -1
 
   after_create :possibles_moves
+  after_create :set_game_as_started
 
   def point_x_valid?
     if !(0...game.rows).include?(point_x)
@@ -44,6 +45,10 @@ class Move < ApplicationRecord
     end
   end
 
+  def set_game_as_started
+    game.update(status: 'started') if game.status == 'new'
+  end
+
   def possibles_moves
     possible = 0
     (0...game.rows).each do |row|
@@ -52,6 +57,7 @@ class Move < ApplicationRecord
       end
     end
     game.update(status: 'won') if possible == 0
+    possible
   end
 
   def mines_around

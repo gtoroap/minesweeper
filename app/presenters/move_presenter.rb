@@ -12,8 +12,9 @@ class MovePresenter
       point_y: @move.point_y,
       mine_found: @move.mine_found?,
       mines_around: @move.mines_around,
-      game_over: @move.game.is_over?,
       game_id: @move.game_id,
+      possibles_moves: @move.possibles_moves,
+      game_status: @move.game.status,
       grid: {
         rows: @move.game.rows,
         columns: @move.game.columns,

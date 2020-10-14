@@ -27,7 +27,7 @@ class Game < ApplicationRecord
   private
 
   def set_status_as_new
-    status = 'new'
+    self.status = 'new'
   end
 
   def total_mines_in_game

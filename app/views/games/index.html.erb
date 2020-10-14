@@ -1,11 +1,5 @@
 <div id="main" class="container">
-  <% if @games.size > 0 %>
-    <p>List of Games</p>
-    <% @games.each do |game| %>
-      <li><%= link_to game.created_at, game %></li>
-    <% end %>
-  <% end %>
-
+  <h1>Minesweeper by <%= link_to '@gtoroap', "https://github.com/gtoroap/minesweeper", target: "_blank" %></h1>
   <button onclick='createGame()'>New Game</button>
   <p></p>
 </div>
@@ -30,12 +24,19 @@
       }
     })
     .done(function( response ) {
-      console.log(response.grid.content)
       createBoard(response.id, response.rows, response.columns, response.mines);
     });
   }
 
   var createBoard = function(gameId, rows, columns, mines){
+    //Destroy any existing canvas and banner
+    var oldCanvas = document.getElementsByTagName("canvas");
+    if(oldCanvas.length > 0){
+      oldCanvas[0].parentNode.removeChild(oldCanvas[0]);
+      var banner = document.getElementById('notice');
+      banner.parentNode.removeChild(banner);
+    }
+
     var gridWith = cellWidth * rows;
     var gridHeight = cellWidth * columns;
     var canvas = document.createElement('canvas');
@@ -91,6 +92,20 @@
       })
       .done(function( response ) {
         drawBoard(response.game_id, response.grid, response.mine_found, response.point_x, response.point_y);
+
+        if(response.game_status == 'won' || response.game_status == 'lost'){
+          var container = document.getElementById('main');
+          var paragraph = document.createElement('p');
+          paragraph.id = 'notice';
+          paragraph.style.fontSize = "xx-large";
+          if(!response.mine_found){
+            var textMessage = document.createTextNode("You Win!!");
+          }else{
+            var textMessage = document.createTextNode("You Lose!!");
+          }
+          paragraph.appendChild(textMessage);
+          container.appendChild(paragraph);
+        }
       });
     }
     return;
@@ -100,7 +115,6 @@
     var canvas = document.getElementById(gameId);
     var context = canvas.getContext("2d");
 
-    console.log(grid.content);
     for (var y = 0; y < grid.columns; y ++) {
       for (var x = 0; x < grid.rows; x ++) {
         var p = 40 * x + padding + 1;
