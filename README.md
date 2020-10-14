@@ -63,3 +63,10 @@ Parameters
 `point_x` : integer
 `point_y` : integer
 `kind` : text
+
+# How to play
+
+1. Go to URL
+2. Create a new game with rows, columns and mines.
+3. Left click on a cell will plays a move. Right click on a cell will put a flag or question mark.
+3. Enjoy!
