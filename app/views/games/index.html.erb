@@ -129,7 +129,7 @@
         }
       })
       .done(function( response ) {
-        drawBoard(response.game_id, response.grid, response.mine_found, response.point_x, response.point_y);
+        drawBoard(response.game_id, response.grid, response.mine_found, response.flags, response.point_x, response.point_y);
 
         if(response.game_status == 'won' || response.game_status == 'lost'){
           var container = document.getElementById('main');
@@ -149,9 +149,11 @@
     return;
   }
 
-  var drawBoard = function(gameId, grid, mineFound, _x, _y){
+  var drawBoard = function(gameId, grid, mineFound, flags, _x, _y){
     var canvas = document.getElementById(gameId);
     var context = canvas.getContext("2d");
+
+    console.log(flags);
 
     for (var y = 0; y < grid.columns; y ++) {
       for (var x = 0; x < grid.rows; x ++) {
@@ -159,7 +161,7 @@
         var q = 40 * y + padding + 1;
         var width = cellWidth - 1;
 
-        if(grid.content[x][y] != null){
+        if(grid.content[x][y] != null && !flags.includes([_x, _y])){
           if(grid.content[x][y] == -1 && mineFound){
             if(x == _x && y == _y){
               context.fillStyle = foundMineColor;

@@ -12,6 +12,7 @@ class MovePresenter
       point_y: @move.point_y,
       mine_found: @move.mine_found?,
       mines_around: @move.mines_around,
+      flags: @move.game.flags.pluck([:point_x, :point_y]),
       game_id: @move.game_id,
       possibles_moves: @move.possibles_moves,
       game_status: @move.game.status,
