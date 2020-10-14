@@ -55,6 +55,8 @@ class Move < ApplicationRecord
   end
 
   def mines_around
+    return - 1 if game.grid[point_x][point_y] == -1
+
     mines = adjacent_mines(point_x, point_y)
     game.grid[point_x][point_y] = mines
     game.save

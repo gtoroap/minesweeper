@@ -14,6 +14,7 @@
 
   const hiddenCellColor = "#ededed";
   const visibleCellColor = "#ffffff";
+  const foundMineColor = "#ff0000";
   const textColor = "#1f1f1f";
   const cellWidth = 40;
   const padding = 10;
@@ -108,11 +109,13 @@
 
         if(grid.content[x][y] != null){
           if(grid.content[x][y] == -1 && mineFound){
-            context.fillStyle = visibleCellColor;
+            if(x == _x && y == _y){
+              context.fillStyle = foundMineColor;
+            }else{
+              context.fillStyle = visibleCellColor;
+            }
             context.fillRect(p, q, width, width);
             context.fillText('💣', p + 20, q + 30, width, width);
-            console.log('Mine found');
-            console.log('This should be in red');
           }else{
             if(grid.content[x][y] == 0){
               context.fillStyle = visibleCellColor;
