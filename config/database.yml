@@ -22,6 +22,6 @@ test:
 
 production:
   <<: *default
-  url: <%= ENV['MINESWEEPER_DB_URL'] %>
+  url: <%= ENV['DATABASE_URL'] %>
   database: minesweeper_prod
 
