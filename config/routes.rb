@@ -11,4 +11,6 @@ Rails.application.routes.draw do
   end
 
   resources :games, only: [:index, :create, :show]
+
+  root to: 'games#index'
 end
