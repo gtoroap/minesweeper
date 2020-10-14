@@ -13,7 +13,12 @@ class MovePresenter
       mine_found: @move.mine_found?,
       mines_around: @move.mines_around,
       game_over: @move.game.is_over?,
-      grid: @move.game.grid
+      game_id: @move.game_id,
+      grid: {
+        rows: @move.game.rows,
+        columns: @move.game.columns,
+        content: @move.game.grid
+      }
     }
   end
 end

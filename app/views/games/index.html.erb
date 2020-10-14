@@ -12,6 +12,12 @@
 
 <script>
 
+  const hiddenCellColor = "#ededed";
+  const visibleCellColor = "#ffffff";
+  const textColor = "#1f1f1f";
+  const cellWidth = 40;
+  const padding = 10;
+
   var createGame = function(){
     $.ajax({
       method: "POST",
@@ -23,16 +29,16 @@
       }
     })
     .done(function( response ) {
-      createBoard(response.rows, response.columns, response.mines);
+      console.log(response.grid.content)
+      createBoard(response.id, response.rows, response.columns, response.mines);
     });
   }
 
-  var createBoard = function(rows, columns, mines){
-    var cellWidth = 40;
+  var createBoard = function(gameId, rows, columns, mines){
     var gridWith = cellWidth * rows;
     var gridHeight = cellWidth * columns;
-    var padding = 10;
     var canvas = document.createElement('canvas');
+    canvas.id = gameId;
     canvas.width = gridWith + padding * 2;
     canvas.height = gridHeight + padding * 2;
     var context = canvas.getContext("2d");
@@ -57,10 +63,73 @@
 
     for (var y = 0; y < columns; y ++) {
       for (var x = 0; x < rows; x ++) {
-        context.fillStyle = "#ededed";
+        context.fillStyle = hiddenCellColor;
         context.fillRect(40 * x + padding + 1, 40 * y + padding + 1, cellWidth - 1, cellWidth - 1);
       }
     }
     canvas.removeAttribute("hidden");
+
+    canvas.addEventListener("mousedown", function(obj) {
+      checkMove(gameId, obj.offsetX, obj.offsetY, rows, columns)
+    });
+  }
+
+  var checkMove = function(gameId, x, y, rows, columns){
+    var cellWidth = 40;
+    var padding = 10;
+    var _x = Math.floor((x - padding) / cellWidth);
+    var _y = Math.floor((y - padding) / cellWidth);
+    if (_x > -1 && _x < rows && _y > -1 && _y < columns){
+      $.ajax({
+        method: "POST",
+        url: `http://localhost:3000/api/v1/games/${gameId}/moves`,
+        data: {
+          point_x: _x,
+          point_y: _y
+        }
+      })
+      .done(function( response ) {
+        drawBoard(response.game_id, response.grid, response.mine_found, response.point_x, response.point_y);
+      });
+    }
+    return;
+  }
+
+  var drawBoard = function(gameId, grid, mineFound, _x, _y){
+    var canvas = document.getElementById(gameId);
+    var context = canvas.getContext("2d");
+
+    console.log(grid.content);
+    for (var y = 0; y < grid.columns; y ++) {
+      for (var x = 0; x < grid.rows; x ++) {
+        var p = 40 * x + padding + 1;
+        var q = 40 * y + padding + 1;
+        var width = cellWidth - 1;
+
+        if(grid.content[x][y] != null){
+          if(grid.content[x][y] == -1 && mineFound){
+            context.fillStyle = visibleCellColor;
+            context.fillRect(p, q, width, width);
+            context.fillText('💣', p + 20, q + 30, width, width);
+            console.log('Mine found');
+            console.log('This should be in red');
+          }else{
+            if(grid.content[x][y] == 0){
+              context.fillStyle = visibleCellColor;
+              context.fillRect(p, q, width, width);
+              context.fillStyle = textColor;
+              context.fillText('', p + 20, q + 20, width, width);
+            }else{
+              if(grid.content[x][y] > 0){
+                context.fillStyle = visibleCellColor;
+                context.fillRect(p, q, width, width);
+                context.fillStyle = textColor;
+                context.fillText(grid.content[x][y], p + 20, q + 30, width, width);
+              }
+            }
+          }
+        }
+      }
+    }
   }
 </script>
