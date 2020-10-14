@@ -10,6 +10,7 @@ class Game < ApplicationRecord
   validate :total_mines_in_game
 
   has_many :moves, autosave: true, dependent: :destroy
+  has_many :flags, dependent: :destroy
 
   after_initialize do |game|
     game.rows = DEFAULT_ROWS_COLUMNS if game.rows.nil?

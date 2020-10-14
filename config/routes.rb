@@ -4,11 +4,8 @@ Rails.application.routes.draw do
   namespace :api, defaults: {format: :json} do 
     namespace :v1 do
       resources :games, only: [:index, :create, :show] do
-        resources :moves, only: [:create] do
-          collection do
-            post '/flag' => 'moves#flag'
-          end
-        end
+        resources :moves, only: [:create]
+        resources :flags, only: [:create]
       end
     end
   end

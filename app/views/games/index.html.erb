@@ -71,14 +71,52 @@
     }
     canvas.removeAttribute("hidden");
 
-    canvas.addEventListener("mousedown", function(obj) {
-      checkMove(gameId, obj.offsetX, obj.offsetY, rows, columns)
+    canvas.addEventListener("contextmenu", function(e) {
+      e.preventDefault();
+      putFlag(gameId, e.offsetX, e.offsetY, rows, columns)
+    });
+
+    canvas.addEventListener("click", function(e) {
+      checkMove(gameId, e.offsetX, e.offsetY, rows, columns)
     });
   }
 
+  var putFlag = function(gameId, x, y, rows, columns){
+    var _x = Math.floor((x - padding) / cellWidth);
+    var _y = Math.floor((y - padding) / cellWidth);
+
+    if (_x > -1 && _x < rows && _y > -1 && _y < columns){
+      var canvas = document.getElementById(gameId);
+      var context = canvas.getContext("2d");
+      var p = 40 * _x + padding + 1;
+      var q = 40 * _y + padding + 1;
+      var width = cellWidth - 1;
+
+      $.ajax({
+        method: "POST",
+        url: `http://localhost:3000/api/v1/games/${gameId}/flags`,
+        data: {
+          point_x: _x,
+          point_y: _y
+        }
+      }).done(function( response ) {
+        context.fillStyle = hiddenCellColor;
+        context.fillRect(p, q, width, width);
+
+        if(response.kind == null){
+          context.fillText('', p + 22, q + 26, width, width);
+        }
+        if(response.kind == 'flag'){
+          context.fillText('🚩', p + 22, q + 26, width, width);
+        }
+        if(response.kind == 'question'){
+          context.fillText('❓', p + 22, q + 26, width, width);
+        }
+      });
+    }
+  }
+
   var checkMove = function(gameId, x, y, rows, columns){
-    var cellWidth = 40;
-    var padding = 10;
     var _x = Math.floor((x - padding) / cellWidth);
     var _y = Math.floor((y - padding) / cellWidth);
     if (_x > -1 && _x < rows && _y > -1 && _y < columns){
