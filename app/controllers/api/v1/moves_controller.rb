@@ -11,7 +11,7 @@ module Api
           @move.save
           render(status: :ok, json: MovePresenter.new(@move).structure)
         else
-          render(status: :bad_request, json: { message: @move.errors.messages })
+          render(status: :bad_request, json: { message: @move.errors.full_messages })
         end
       end
 

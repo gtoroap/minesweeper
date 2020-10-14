@@ -1,7 +1,14 @@
 <div id="main" class="container">
   <h1>Minesweeper by <%= link_to '@gtoroap', "https://github.com/gtoroap/minesweeper", target: "_blank" %></h1>
-  <button onclick='createGame()'>New Game</button>
-  <p></p>
+
+  <form id="createGame" class="form-inline">
+    <input type="text" class="form-control col-sm-1 mb-2 mr-sm-2" id="inputRows" placeholder="Rows">
+    <input type="text" class="form-control col-sm-1 mb-2 mr-sm-2" id="inputColumns" placeholder="Columns">
+    <input type="text" class="form-control col-sm-1 mb-2 mr-sm-2" id="inputMines" placeholder="Mines">
+
+    <button type="submit" class="btn btn-primary mb-2">New Game</button>
+  </form>
+  <p id="errorMessages"></p>
 </div>
 
 <script>
@@ -13,29 +20,54 @@
   const cellWidth = 40;
   const padding = 10;
 
+  var form = document.getElementById('createGame');
+  form.addEventListener("submit", function(e) {
+    e.preventDefault();
+    createGame();
+  });
+
   var createGame = function(){
     $.ajax({
       method: "POST",
-      url: "http://localhost:3000/api/v1/games",
+      url: "/api/v1/games",
       data: {
-        rows: 10,
-        columns: 10,
-        mines: 20
+        rows: parseInt(document.getElementById('inputRows').value),
+        columns: parseInt(document.getElementById('inputColumns').value),
+        mines: parseInt(document.getElementById('inputMines').value)
       }
     })
     .done(function( response ) {
       createBoard(response.id, response.rows, response.columns, response.mines);
+      var errorBanner = document.getElementById('errorMessages');
+      errorBanner.innerHTML = '';
+    })
+    .fail(function( error ) {
+      destroyCanvas();
+      var errorBanner = document.getElementById('errorMessages');
+      var message = JSON.parse(error.responseText).message;
+      var textMessage = document.createTextNode(message);
+      errorBanner.innerHTML = '';
+      errorBanner.appendChild(textMessage);
+    })
+    .always(function( response ) {
+      form.reset();
     });
   }
 
-  var createBoard = function(gameId, rows, columns, mines){
-    //Destroy any existing canvas and banner
+  var destroyCanvas = function(){
     var oldCanvas = document.getElementsByTagName("canvas");
     if(oldCanvas.length > 0){
       oldCanvas[0].parentNode.removeChild(oldCanvas[0]);
       var banner = document.getElementById('notice');
-      banner.parentNode.removeChild(banner);
+      if(banner){
+        banner.parentNode.removeChild(banner);
+      }
     }
+  }
+
+  var createBoard = function(gameId, rows, columns, mines){
+    //Destroy any existing canvas and banner
+    destroyCanvas();
 
     var gridWith = cellWidth * rows;
     var gridHeight = cellWidth * columns;
@@ -94,7 +126,7 @@
 
       $.ajax({
         method: "POST",
-        url: `http://localhost:3000/api/v1/games/${gameId}/flags`,
+        url: `/api/v1/games/${gameId}/flags`,
         data: {
           point_x: _x,
           point_y: _y
@@ -122,7 +154,7 @@
     if (_x > -1 && _x < rows && _y > -1 && _y < columns){
       $.ajax({
         method: "POST",
-        url: `http://localhost:3000/api/v1/games/${gameId}/moves`,
+        url: `/api/v1/games/${gameId}/moves`,
         data: {
           point_x: _x,
           point_y: _y
