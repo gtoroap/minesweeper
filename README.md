@@ -1,24 +1,65 @@
 # README
 
-This README would normally document whatever steps are necessary to get the
-application up and running.
+Minesweeper by @gtoroap
 
-Things you may want to cover:
+# Api
 
-* Ruby version
+This API only have the following endpoints.
 
-* System dependencies
+Notice: Every endpoint should prepend `/api/v1/` to work.
 
-* Configuration
+## Games
 
-* Database creation
+POST /games
 
-* Database initialization
+### Request
+Parameters
+`rows` : integer
+`columns` : integer
+`mines`  : integer
 
-* How to run the test suite
+### Response
 
-* Services (job queues, cache servers, search engines, etc.)
+`id`: integer
+`rows` : integer
+`columns` : integer
+`mines`  : integer
+`status` : text
+`grid` : array
 
-* Deployment instructions
+## Moves
 
-* ...
+POST /games/:id/moves
+
+### Request
+Parameters
+`point_x` : integer
+`point_y` : integer
+
+### Response
+
+`id`: integer
+`game_id` : integer
+`mines_around` : integer
+`mine_found`  : boolean
+`possibles_moves` : integer
+`game_status` : text
+`grid` : array
+`flags` : array
+
+## Flags
+
+POST /games/:id/flags
+
+### Request
+Parameters
+`point_x` : integer
+`point_y` : integer
+
+### Response
+
+`id`: integer
+`game_id` : integer
+`point_x` : integer
+`point_y` : integer
+`kind` : text
